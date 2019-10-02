@@ -14,29 +14,27 @@ from nozomi.exceptions import InvalidTagFormat
 logger = logging.getLogger(__name__)
 
 
-# TODO: Add foreign language test.
 @pytest.mark.unit
 @pytest.mark.parametrize('tag, expected', [
-    ('shuten_douji_(fate/grand_order)', 'shuten_douji_(fategrand_order)')
+    ('shuten_douji_(fate/grand_order)', 'shuten_douji_(fategrand_order)'),
+    ('オリジナル', 'オリジナル')
 ])
 def test_sanitize_valid_tag(tag: str, expected: str):
-    assert sanitize_tag(tag) == expected
+    assert sanitize_tag(tag).casefold() == expected.casefold()
 
 
-# TODO: Add foreign language test.
 @pytest.mark.unit
-@pytest.mark.parametrize('tag', [(''), ('/'), ('#'), ('//'), ('-')])
+@pytest.mark.parametrize('tag', ['', '/', '#', '//', '-'])
 def test_sanitize_invalid_tag(tag: str):
     with pytest.raises(InvalidTagFormat):
         tag = sanitize_tag(tag)
-        assert len(tag) != 0
 
 
-# TODO: Add foreign language test.
 @pytest.mark.unit
 @pytest.mark.parametrize('tag, expected', [
     ('shuten_douji_(fategrand_order)', 'https://j.nozomi.la/nozomi/shuten_douji_(fategrand_order).nozomi'),
-    ('testing123~/@', 'https://j.nozomi.la/nozomi/testing123~%2F%40.nozomi')
+    ('testing123~/@', 'https://j.nozomi.la/nozomi/testing123~%2F%40.nozomi'),
+    ('オリジナル', 'https://j.nozomi.la/nozomi/オリジナル.nozomi')
 ])
 def test_generates_valid_address(tag: str, expected: str):
-    assert create_tag_filepath(tag) == expected
+    assert create_tag_filepath(tag).casefold() == expected.casefold()

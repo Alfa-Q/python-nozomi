@@ -11,7 +11,6 @@ TODO: Use logging and add logging support.
 """
 
 import re
-import urllib
 import logging
 
 from nozomi.exceptions import InvalidTagFormat
@@ -55,5 +54,6 @@ def create_tag_filepath(sanitized_tag: str) -> str:
         The URL of the search tag's associated .nozomi file.
 
     """
-    encoded_tag = urllib.parse.quote(sanitized_tag, safe='()')
+    # Since Nozomi uses a custom urlencoder, I did not encode the tag with Python's urllib
+    encoded_tag = re.sub('[;/?:@=&]', lambda c: f"%{format(ord(c.group(0)), 'x')}", sanitized_tag)
     return f"https://j.nozomi.la/nozomi/{encoded_tag}.nozomi"
