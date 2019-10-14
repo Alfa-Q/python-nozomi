@@ -27,7 +27,7 @@ def test_sanitize_valid_tag(tag: str, expected: str):
 @pytest.mark.parametrize('tag', ['', '/', '#', '//', '-'])
 def test_sanitize_invalid_tag(tag: str):
     with pytest.raises(InvalidTagFormat):
-        tag = sanitize_tag(tag)
+        sanitize_tag(tag)
 
 
 @pytest.mark.unit
@@ -38,3 +38,10 @@ def test_sanitize_invalid_tag(tag: str):
 ])
 def test_generates_valid_address(tag: str, expected: str):
     assert create_tag_filepath(tag).casefold() == expected.casefold()
+
+
+@pytest.mark.unit
+@pytest.mark.parametrize('tag', [''])
+def test_generates_invalid_address(tag: str):
+    with pytest.raises(InvalidTagFormat):
+        create_tag_filepath(tag)

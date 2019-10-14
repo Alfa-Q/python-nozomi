@@ -50,10 +50,16 @@ def create_tag_filepath(sanitized_tag: str) -> str:
     Args:
         sanitized_tag: The sanitized search tag.
 
+    Raises:
+        InvalidTagFormat: If the tag was not sanitized before creating a tag filepath.
+
     Returns:
         The URL of the search tag's associated .nozomi file.
 
     """
     # Since Nozomi uses a custom urlencoder, I did not encode the tag with Python's urllib
     encoded_tag = re.sub('[;/?:@=&]', lambda c: f"%{format(ord(c.group(0)), 'x')}", sanitized_tag)
+    if not encoded_tag:
+        raise InvalidTagFormat(f"The encoded tag '{encoded_tag}' is invalid. Make sure to " +
+                               "sanitize the tag before attempting to create a filepath.")
     return f"https://j.nozomi.la/nozomi/{encoded_tag}.nozomi"
