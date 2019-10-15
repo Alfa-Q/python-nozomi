@@ -71,6 +71,29 @@ def create_tag_filepath(sanitized_tag: str) -> str:
     return f"https://j.nozomi.la/nozomi/{encoded_tag}.nozomi"
 
 
+def create_post_filepath(post_id: int) -> str:
+    """Build the path to a post's JSON file.
+
+    The rules for creating the filepath can be found in the site's javascript file. They appear to
+    be arbitrary decisions. The JSON file for the post contains a variety of useful data including
+    image data, popularity, tags, etc.
+
+    Args:
+        post_id: The ID of a post on the website.
+
+    Returns:
+        The URL of the post's associated JSON file.
+
+    """
+    _LOGGER.info("Creating tag filepath for post ID %d", post_id)
+    post_id = str(post_id)
+    if len(post_id) < 3:
+        path = post_id
+    else:
+        path = re.sub('^.*(..)(.)$', r'\g<2>/\g<1>/' + post_id, post_id)
+    return f'https://j.nozomi.la/post/{path}.json'
+
+
 def _validate_tag_sanitized(tag: str) -> None:
     """Validate a search tag is sanitized properly.
 
