@@ -26,18 +26,21 @@ def sanitize_tag(tag: str) -> str:
         tag: The search tag.
 
     Raises:
-        InvalidTagFormat: If the tag is an empty string or begins with an invalid character.
+        InvalidTagFormat: If the tag was not sanitized properly.
 
     Returns:
         A tag in a valid format.
 
     """
-    sanitized_tag = tag.lower().strip()
-    sanitized_tag = re.sub('[/#%]', '', sanitized_tag)
-    if not sanitized_tag:
-        raise InvalidTagFormat(f"The tag '{tag}' is invalid. Cannot be empty after sanitization.")
-    if sanitized_tag[0] == '-':
-        raise InvalidTagFormat(f"The tag '{tag}' is invalid. Cannot begin with character '-'")
+    _LOGGER.info("Sanitizing tag '%s'", tag)
+    try:
+        sanitized_tag = tag.lower().strip()
+        sanitized_tag = re.sub('[/#%]', '', sanitized_tag)
+        _validate_tag_sanitized(sanitized_tag)
+    except InvalidTagFormat:
+        raise
+    except Exception as ex:
+        _LOGGER.exception(ex)
     return sanitized_tag
 
 
@@ -57,9 +60,44 @@ def create_tag_filepath(sanitized_tag: str) -> str:
         The URL of the search tag's associated .nozomi file.
 
     """
-    # Since Nozomi uses a custom urlencoder, I did not encode the tag with Python's urllib
-    encoded_tag = re.sub('[;/?:@=&]', lambda c: f"%{format(ord(c.group(0)), 'x')}", sanitized_tag)
-    if not encoded_tag:
-        raise InvalidTagFormat(f"The encoded tag '{encoded_tag}' is invalid. Make sure to " +
-                               "sanitize the tag before attempting to create a filepath.")
+    _LOGGER.info("Creating tag filepath for sanitized tag '%s'", sanitized_tag)
+    try:
+        _validate_tag_sanitized(sanitized_tag)
+        encoded_tag = _encode_tag(sanitized_tag)
+    except InvalidTagFormat:
+        raise InvalidTagFormat('Tag must be sanitized before creating a filepath.')
+    except Exception as ex:
+        _LOGGER.exception(ex)
     return f"https://j.nozomi.la/nozomi/{encoded_tag}.nozomi"
+
+
+def _validate_tag_sanitized(tag: str) -> None:
+    """Validate a search tag is sanitized properly.
+
+    Args:
+        tag: The search tag.
+
+    Raises:
+        InvalidTagFormat: If the tag is an empty string or begins with an invalid character.
+
+    """
+    if not tag:
+        raise InvalidTagFormat(f"The tag '{tag}' is invalid. Cannot be empty.")
+    if tag[0] == '-':
+        raise InvalidTagFormat(f"The tag '{tag}' is invalid. Cannot begin with character '-'")
+
+
+def _encode_tag(sanitized_tag: str) -> str:
+    """Encode a sanitized tag using Nozomi's custom urlencoder.
+
+    Args:
+        sanitized_tag: The sanitized search tag.
+
+    Returns:
+        The encoded sanitized search tag.
+
+    """
+    _LOGGER.debug("Encoding sanitized tag '%s'", sanitized_tag)
+    convert_char_to_hex = lambda c: f"%{format(ord(c.group(0)), 'x')}"
+    encoded_tag = re.sub('[;/?:@=&]', convert_char_to_hex, sanitized_tag)
+    return encoded_tag

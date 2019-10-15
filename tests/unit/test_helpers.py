@@ -1,7 +1,5 @@
 """Test the functionality of the conversion functions."""
 
-import logging
-
 import pytest
 
 from nozomi.helpers import (
@@ -9,9 +7,10 @@ from nozomi.helpers import (
     create_tag_filepath
 )
 from nozomi.exceptions import InvalidTagFormat
+from tests.config import setup_logger
 
 
-logger = logging.getLogger(__name__)
+setup_logger()
 
 
 @pytest.mark.unit
