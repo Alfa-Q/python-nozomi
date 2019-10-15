@@ -104,6 +104,7 @@ def _validate_tag_sanitized(tag: str) -> None:
         InvalidTagFormat: If the tag is an empty string or begins with an invalid character.
 
     """
+    _LOGGER.debug("Validating that the tag '%s' is sanitized", tag)
     if not tag:
         raise InvalidTagFormat(f"The tag '{tag}' is invalid. Cannot be empty.")
     if tag[0] == '-':

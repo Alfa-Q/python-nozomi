@@ -13,5 +13,5 @@ def setup_logger():
         filename=_LOGFILE_NAME,
         filemode='w',
         level=logging.DEBUG,
-        format='%(levelname)-8s Module: %(name)-15s Function: %(funcName)-20s: %(message)s'
+        format='%(levelname)-8s Module: %(name)-15s Function: %(funcName)-25s: %(message)s'
     )
