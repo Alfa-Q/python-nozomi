@@ -8,10 +8,6 @@ from nozomi.helpers import (
     create_post_filepath
 )
 from nozomi.exceptions import InvalidTagFormat
-from tests.config import setup_logger
-
-
-setup_logger()
 
 
 @pytest.mark.unit
