@@ -1,6 +1,6 @@
 """Represents nozomi dataclasses."""
 
-from typing import List
+from typing import List, Optional
 from dataclasses import dataclass, field
 
 
@@ -24,19 +24,19 @@ class Tag:
 
     Args:
         tagurl (str): URL to the tag's HTML file.
-        count (int): The total number of posts that have the tag.
-        tagtype (str): The type of tag (i.e. character, artist, ...).
         tag (str): Name of the tag (unsanitized).
         tagname_display (str): The display name of the tag.
+        tagtype (str): The type of tag (i.e. character, artist, ...).
+        count (int): The total number of posts that have the tag.
         sanitized_tag (str): An additional tag used for testing purposes.
 
     """
 
     tagurl:             str
-    count:              int
-    tagtype:            str
     tag:                str
     tagname_display:    str
+    tagtype:            Optional[str]
+    count:              Optional[int]
     sanitized_tag:      str = field(init=False)
 
     def __post_init__(self):
