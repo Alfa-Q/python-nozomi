@@ -13,6 +13,7 @@ class MediaMetaData:
         imageurl (str): Url to the media file.
 
     """
+
     is_video:   str
     imageurl:   str
 
@@ -30,14 +31,16 @@ class Tag:
         sanitized_tag (str): An additional tag used for testing purposes.
 
     """
+
     tagurl:             str
     count:              int
     tagtype:            str
     tag:                str
     tagname_display:    str
     sanitized_tag:      str = field(init=False)
+
     def __post_init__(self):
-        """Calculates fields after the object is initialized."""
+        """Calculate fields after the object is initialized."""
         sanitized_tag = self.tagurl.split('/')[-1].split('-')[0]
         # Set the tag without raising a FrozenClass error.
         object.__setattr__(self, 'sanitized_tag', sanitized_tag)
@@ -66,6 +69,7 @@ class Post(MediaMetaData):
         imageurls (List[MediaMetaData]): The media featured in the post.
 
     """
+
     width:      int
     favorites:  int
     source:     str
