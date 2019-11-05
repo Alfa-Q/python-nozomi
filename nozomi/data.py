@@ -17,6 +17,12 @@ class MediaMetaData:
     is_video:   str
     imageurl:   str
 
+    def __post_init__(self):
+        """Calculate fields after the object is initialized."""
+        new_imageurl = 'https:' + self.imageurl
+        # Set the tag without raising a FrozenClass error.
+        object.__setattr__(self, 'imageurl', new_imageurl)
+
 
 @dataclass(frozen=True)
 class Tag:
