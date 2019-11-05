@@ -8,27 +8,27 @@ import requests
 from dacite import from_dict
 
 from nozomi.data import Post
-from nozomi.exceptions import InvalidTagFormat, InvalidArgument
+from nozomi.exceptions import InvalidTagFormat
 from nozomi.helpers import sanitize_tag, create_tag_filepath, create_post_filepath
 
 
 _LOGGER = logging.getLogger(__name__)
 
 
-def get_posts(positive_tags: List[str], negative_tags: List[str]) -> Iterable[Post]:
+def get_posts(positive_tags: List[str], negative_tags: List[str]=None) -> Iterable[Post]:
     """Retrieve all post data that contains and doesn't contain certain tags.
 
     Args:
         positive_tags: The tags that the posts retrieved must contain.
-        negative_tags: The tags that the posts retrieved cannot contain.
+        negative_tags: Optional, blacklisted tags.
 
     Yields:
         A post in JSON format, which contains the positive tags and doesn't contain the negative
         tags.
 
     """
-    if len(positive_tags) == 0:
-        raise InvalidArgument('positive_tags must contain at least one tag.')
+    if negative_tags is None:
+        negative_tags = list()
     _LOGGER.debug('Retrieving posts with positive_tags=%s and negative_tags=%s',
                   str(positive_tags), str(negative_tags))
     try:

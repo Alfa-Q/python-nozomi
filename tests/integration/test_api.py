@@ -9,20 +9,18 @@ from nozomi.data import Post
 @pytest.mark.integration
 @pytest.mark.parametrize('positive_tags', [
     (['akali', 'sakimichan']),
-    (['オリジナル'])
+    (['veigar'])
 ])
 def test_retrieval_positive_tags(positive_tags):
     for post in api.get_posts(positive_tags=positive_tags, negative_tags=[]):
-        assert isinstance(post) is Post
-        break
+        assert isinstance(post, Post)
 
 
 @pytest.mark.integration
 @pytest.mark.parametrize('positive_tags, negative_tags', [
     (['akali', 'sakimichan'], ['nudity']),
-    (['オリジナル'], ['nudity'])
+    (['veigar'], ['nudity'])
 ])
 def test_retrieval_negative_tags(positive_tags, negative_tags):
     for post in api.get_posts(positive_tags=positive_tags, negative_tags=negative_tags):
-        assert isinstance(post) is Post
-        break
+        assert isinstance(post, Post)
