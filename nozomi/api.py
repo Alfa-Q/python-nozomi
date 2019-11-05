@@ -2,6 +2,8 @@
 
 import logging
 import struct
+import shutil
+from pathlib import Path
 from typing import Iterable, List
 
 import requests
@@ -44,6 +46,42 @@ def get_posts(positive_tags: List[str], negative_tags: List[str]=None) -> Iterab
     except Exception as ex:
         _LOGGER.exception(ex)
         raise
+
+
+def download_media(post: Post, filepath: Path) -> str:
+    """Download the media on a post and save it.
+
+    Args:
+        post: The post to download.
+        filepath: The file directory to save the media. The directory will be created if it doesn't
+            already exist.
+
+    Returns:
+        The name of the file downloaded.
+
+    """
+    filepath.mkdir(parents=True, exist_ok=True)
+    image_name = post.imageurl.split('/')[-1]
+    filepath = filepath.joinpath(image_name)
+    headers = {
+        'Host': 'i.nozomi.la',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:69.0) Gecko/20100101 Firefox/69.0',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,/;q=0.8',
+        'Accept-Language': 'en-US,en;q=0.5',
+        'Accept-Encoding': 'gzip, deflate, br',
+        'DNT': '1',
+        'Connection': 'keep-alive',
+        'Referer': 'https://nozomi.la/',
+        'Upgrade-Insecure-Requests': '1',
+        'TE': 'Trailers',
+        'Pragma': 'no-cache',
+        'Cache-Control': 'no-cache'
+    }
+    with requests.get(post.imageurl, stream=True, headers=headers) as r:
+        with open(filepath, 'wb') as f:
+            shutil.copyfileobj(r.raw, f)
+    _LOGGER.debug('Image downloaded %s', filepath)
+    return image_name
 
 
 def _get_post_urls(tags: List[str]) -> List[str]:
