@@ -5,7 +5,7 @@ from distutils.core import setup
 
 setup(
   name='python-nozomi',
-  packages=['python-nozomi'],
+  packages=['nozomi'],
   version='1.0',
   license='MIT',
   description='Nozomi API for retrieving images, videos, gifs.',
