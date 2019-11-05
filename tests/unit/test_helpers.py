@@ -2,11 +2,7 @@
 
 import pytest
 
-from nozomi.helpers import (
-    sanitize_tag,
-    create_tag_filepath,
-    create_post_filepath
-)
+from nozomi.helpers import sanitize_tag, create_tag_filepath, create_post_filepath
 from nozomi.exceptions import InvalidTagFormat
 
 
