@@ -17,7 +17,21 @@ from nozomi.helpers import sanitize_tag, create_tag_filepath, create_post_filepa
 _LOGGER = logging.getLogger(__name__)
 
 
-def get_posts(positive_tags: List[str], negative_tags: List[str]=None) -> Iterable[Post]:
+def get_all_posts(positive_tags: List[str], negative_tags: List[str] = None) -> List[Post]:
+    """Retrieve all the post data that contains and doesn't contain certain tags.
+
+    Args:
+        positive_tags: The tags that the posts retrieved must contain.
+        negative_tags: Optional, blacklisted tags.
+
+    Returns:
+        A list of Posts that contains all the positive tags and doesn't contain the negative tags.
+
+    """
+    return [post for post in get_posts(positive_tags=positive_tags, negative_tags=negative_tags)]
+
+
+def get_posts(positive_tags: List[str], negative_tags: List[str] = None) -> Iterable[Post]:
     """Retrieve all post data that contains and doesn't contain certain tags.
 
     Args:
@@ -25,7 +39,7 @@ def get_posts(positive_tags: List[str], negative_tags: List[str]=None) -> Iterab
         negative_tags: Optional, blacklisted tags.
 
     Yields:
-        A post in JSON format, which contains the positive tags and doesn't contain the negative
+        An instance of a Post which contains all the positive tags and doesn't contain the negative
         tags.
 
     """
