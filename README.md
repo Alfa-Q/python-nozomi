@@ -4,7 +4,7 @@
 [![PyPI version](https://badge.fury.io/py/python-nozomi.svg)](https://badge.fury.io/py/python-nozomi)
 [![Python version](https://img.shields.io/badge/python-%203.7%20%7C%203.8-green)](https://www.python.org/downloads/release/python-360/)
 
-nozomi.la (**NSFW**) API in Python.
+nozomi.la API in Python.
 
 ## Features
 -   Retrieving image and video posts
@@ -22,9 +22,9 @@ from pathlib import Path
 from nozomi import api
     
 # The tags that the posts retrieved must contain
-positive_tags = ['kimetsu_no_yaiba', 'wallpaper']
+positive_tags = ['veigar', 'wallpaper']
 
-# Gets all posts with the tags 'kimetsu_no_yaiba', 'wallpaper'
+# Gets all posts with the tags 'veigar', 'wallpaper'
 for post in api.get_posts(positive_tags):
     api.download_media(post, Path.cwd())
 ```
@@ -32,9 +32,9 @@ for post in api.get_posts(positive_tags):
 Retrieve all posts containing certain tags with blacklisted tags
 ```python
 # The blacklisted tags
-negative_tags = ['nudity']
+negative_tags = ['chogath']
 
-# Gets all posts with the tags 'kimetsu_no_yaiba', 'wallpaper' but no 'nudity' tag.
+# Gets all posts with the tags 'veigar', 'wallpaper' but no 'chogath' tag.
 for post in api.get_posts(positive_tags, negative_tags):
     api.download_media(post, Path.cwd())
 ```
