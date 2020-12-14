@@ -15,6 +15,11 @@ nozomi.la API in Python.
 $ pip install python-nozomi
 ```
 
+## Upgrade
+```
+$ pip install python-nozomi --upgrade
+```
+
 ## Example Usage
 Retrieve and download a single post provided a URL
 ```python
