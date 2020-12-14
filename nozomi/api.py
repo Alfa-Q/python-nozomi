@@ -72,8 +72,8 @@ def get_posts(positive_tags: List[str], negative_tags: List[str]=None) -> Iterab
         raise
 
 
-def download_media(post: Post, filepath: Path) -> str:
-    """Download the media on a post and save it.
+def download_media(post: Post, filepath: Path) -> List[str]:
+    """Download all media on a post and save it.
 
     Args:
         post: The post to download.
@@ -81,12 +81,29 @@ def download_media(post: Post, filepath: Path) -> str:
             already exist.
 
     Returns:
-        The name of the file downloaded.
+        The names of the images downloaded.
 
     """
+    images_downloaded = []
     filepath.mkdir(parents=True, exist_ok=True)
-    image_name = post.imageurl.split('/')[-1]
-    filepath = filepath.joinpath(image_name)
+    for media_meta_data in post.imageurls:
+        image_url = media_meta_data.imageurl
+        image_name = image_url.split('/')[-1]
+        image_filepath = filepath.joinpath(image_name)
+        _download_media(image_url, image_filepath)
+        images_downloaded.append(image_name)
+    return images_downloaded
+
+
+def _download_media(image_url: str, filepath: Path):
+    """Download an image and save it.
+
+    Args:
+        image_url: The image URL.
+        filepath: The file directory to save the media. The directory will be created if it doesn't
+            already exist.
+
+    """
     headers = {
         'Host': 'i.nozomi.la',
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:69.0) Gecko/20100101 Firefox/69.0',
@@ -101,11 +118,10 @@ def download_media(post: Post, filepath: Path) -> str:
         'Pragma': 'no-cache',
         'Cache-Control': 'no-cache'
     }
-    with requests.get(post.imageurl, stream=True, headers=headers) as r:
+    with requests.get(image_url, stream=True, headers=headers) as r:
         with open(filepath, 'wb') as f:
             shutil.copyfileobj(r.raw, f)
     _LOGGER.debug('Image downloaded %s', filepath)
-    return image_name
 
 
 def _get_post_urls(tags: List[str]) -> List[str]:

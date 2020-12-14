@@ -54,11 +54,24 @@ def test_retrieval_negative_tags(positive_tags, negative_tags):
 @pytest.mark.parametrize('positive_tags, negative_tags', [
     (['akali', 'sakimichan'], [])
 ])
-def test_download(positive_tags, negative_tags):
+def test_download_single_img(positive_tags, negative_tags):
     repeat = 10
     for post in api.get_posts(positive_tags=positive_tags, negative_tags=negative_tags):
-        image_name = api.download_media(post, Path.cwd())
+        [image_name] = api.download_media(post, Path.cwd())
         os.remove(Path.cwd().joinpath(image_name))
         repeat -= 1
         if repeat == 0:
             break
+
+
+@pytest.mark.integration
+@pytest.mark.parametrize('url', [
+    'https://nozomi.la/post/25937459.html#pixiv_id_31112502'
+])
+def test_download_multi_img(url):
+    post = api.get_post(url)
+    assert len(post.imageurls) > 0
+    image_names = api.download_media(post, Path.cwd())
+    assert len(image_names) == len(post.imageurls)
+    for image_name in image_names:
+        os.remove(Path.cwd().joinpath(image_name))
