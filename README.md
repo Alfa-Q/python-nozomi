@@ -16,11 +16,22 @@ $ pip install python-nozomi
 ```
 
 ## Example Usage
-Retrieve and download all posts containing certain tags
+Retrieve and download a single post provided a URL
 ```python
 from pathlib import Path
 from nozomi import api
-    
+
+url = 'https://nozomi.la/post/26905532.html#veigar'
+
+# Retrieve post metadata using the URL
+post = api.get_post(url)
+
+# Download the post
+api.download_media(post, Path.cwd())
+```
+
+Retrieve and download all posts containing certain tags
+```python   
 # The tags that the posts retrieved must contain
 positive_tags = ['veigar', 'wallpaper']
 
