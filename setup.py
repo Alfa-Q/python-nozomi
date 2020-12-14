@@ -6,7 +6,7 @@ from setuptools import setup
 setup(
     name='python-nozomi',
     packages=['nozomi'],
-    version='1.1.1',
+    version='1.2.0',
     license='MIT',
     description='Nozomi API for retrieving images, videos, gifs.',
     long_description=open("README.md").read(),
