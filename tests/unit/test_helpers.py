@@ -2,8 +2,8 @@
 
 import pytest
 
-from nozomi.helpers import sanitize_tag, create_tag_filepath, create_post_filepath
-from nozomi.exceptions import InvalidTagFormat
+from nozomi.helpers import sanitize_tag, create_tag_filepath, create_post_filepath, parse_post_id
+from nozomi.exceptions import InvalidTagFormat, InvalidUrlFormat
 
 
 @pytest.mark.unit
@@ -20,6 +20,26 @@ def test_sanitize_valid_tag(tag: str, expected: str):
 def test_sanitize_invalid_tag(tag: str):
     with pytest.raises(InvalidTagFormat):
         sanitize_tag(tag)
+
+
+@pytest.mark.unit
+@pytest.mark.parametrize('url, expected', [
+    ('https://nozomi.la/post/26945941.html#sakimichan', 26945941),
+    ('https://nozomi.la/post/26945920.html#sakimichan', 26945920),
+    ('https://nozomi.la/post/26905532.html#veigar', 26905532)
+])
+def test_parse_post_id_valid(url: str, expected: int):
+    assert parse_post_id(url) == expected
+
+
+@pytest.mark.unit
+@pytest.mark.parametrize('url', [
+    'https://i.nozomi.la/b/d0/fcedb19b290f62136c304480d1aa18ab98caee262b97a519ccf289fb0f56dd0b.jpg',
+    'https://i.nozomi.la/a/5c/49c8946c0f173c536e3735555d8e451526d845ebe07e09773927009db38ae5ca.jpg'
+])
+def test_parse_post_id_invalid(url: str):
+    with pytest.raises(InvalidUrlFormat):
+        parse_post_id(url)
 
 
 @pytest.mark.unit

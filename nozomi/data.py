@@ -77,11 +77,9 @@ class Post(MediaMetaData):
     """
 
     width:      int
-    favorites:  int
     source:     str
     date:       str
     height:     int
-    sourceid:   int
     postid:     int
     dataid:     str
     general:    List[Tag]           = field(default_factory=list)
