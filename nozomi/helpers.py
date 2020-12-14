@@ -6,14 +6,12 @@ ensuring that queries are made in a particular format used by the website.
 If this package grows more complex, the functionality can be divided in a more manner. Due to
 the simplicity of the current API, there isn't really a point right now.
 
-TODO: Use logging and add logging support.
-
 """
 
 import re
 import logging
 
-from nozomi.exceptions import InvalidTagFormat
+from nozomi.exceptions import InvalidTagFormat, InvalidUrlFormat
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -42,6 +40,30 @@ def sanitize_tag(tag: str) -> str:
     except Exception as ex:
         _LOGGER.exception(ex)
     return sanitized_tag
+
+
+def parse_post_id(url: str) -> int:
+    """Parse the post ID.
+
+    Args:
+        url: The URL of the post ID.
+
+    Raises:
+        InvalidUrlFormat: If the URL cannot be parsed because it is not a valid format.
+
+    Returns:
+        The ID of the post.
+
+    """
+    _LOGGER.info("Parsing post ID from URL %s", url)
+    try:
+        post_id = re.search(r"post\/([\s\S]*?)\.html", url).group(1)
+        post_id = int(post_id)
+    except AttributeError:
+        raise InvalidUrlFormat('The provided URL %s could not be parsed.', url)
+    except Exception as ex:
+        _LOGGER.exception(ex)
+    return post_id
 
 
 def create_tag_filepath(sanitized_tag: str) -> str:
