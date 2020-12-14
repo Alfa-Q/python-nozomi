@@ -10,6 +10,27 @@ from nozomi.data import Post
 
 
 @pytest.mark.integration
+@pytest.mark.parametrize('url', [
+    'https://nozomi.la/post/26905532.html#veigar',
+    "https://nozomi.la/post/26932594.html#cho'gath",
+    'https://nozomi.la/post/25802243.html#nautilus'
+])
+def test_get_post_single_img(url: str):
+    post = api.get_post(url)
+    assert isinstance(post, Post)
+
+
+@pytest.mark.integration
+@pytest.mark.parametrize('url', [
+    'https://nozomi.la/post/25937459.html#pixiv_id_31112502'
+])
+def test_get_post_multi_img(url: str):
+    post = api.get_post(url)
+    assert isinstance(post, Post)
+    assert len(post.imageurls) > 1
+
+
+@pytest.mark.integration
 @pytest.mark.parametrize('positive_tags', [
     (['akali', 'sakimichan']),
     (['veigar'])

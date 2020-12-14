@@ -10,11 +10,35 @@ import requests
 from dacite import from_dict
 
 from nozomi.data import Post
-from nozomi.exceptions import InvalidTagFormat
-from nozomi.helpers import sanitize_tag, create_tag_filepath, create_post_filepath
+from nozomi.exceptions import InvalidTagFormat, InvalidUrlFormat
+from nozomi.helpers import sanitize_tag, create_tag_filepath, create_post_filepath, parse_post_id
 
 
 _LOGGER = logging.getLogger(__name__)
+
+
+def get_post(url: str) -> Post:
+    """Retrieve a single post.
+
+    Args:
+        url: The URL of the post to retrieve.
+
+    Returns:
+        A post in JSON format if it exists.
+
+    """
+    _LOGGER.debug('Retrieving a post from URL "%s"', url)
+    try:
+        post_id = parse_post_id(url)
+        post_url = create_post_filepath(post_id)
+        post_data = requests.get(post_url).json()
+        _LOGGER.debug(post_data)
+        return from_dict(data_class=Post, data=post_data)
+    except InvalidUrlFormat:
+        raise
+    except Exception as ex:
+        _LOGGER.exception(ex)
+        raise
 
 
 def get_posts(positive_tags: List[str], negative_tags: List[str]=None) -> Iterable[Post]:
