@@ -19,12 +19,12 @@ class MediaMetaData:
 
     """
 
-    is_video:       str
-    type:           str
-    dataid:         str
-    imageurl:       str = field(init=False)
-    width:          int
-    height:         int
+    is_video:   str
+    type:       str
+    dataid:     str
+    imageurl:   str = field(init=False)
+    width:      int
+    height:     int
 
     def __post_init__(self):
         """Calculate fields after the object is initialized."""
@@ -64,9 +64,6 @@ class Tag:
 @dataclass(frozen=True)
 class Post(MediaMetaData):
     """Post information.
-
-    Some of the fields seem rather redundant. For example, there is the field 'imageurls' but
-    there will only ever be one imageurl.
 
     Args:
         date (str): The date that the post was uploaded on.
