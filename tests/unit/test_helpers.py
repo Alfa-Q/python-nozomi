@@ -77,7 +77,7 @@ def test_parse_post_id_invalid(url: str):
 @pytest.mark.parametrize('media, expected', [
     (generate_media(dataid='1', type='jpg'), 'https://w.nozomi.la/1.webp'),
     (generate_media(dataid='1', type='gif'), 'https://g.nozomi.la/1.gif'),
-    (generate_media(dataid='1', is_video='True',  type='mp4'), 'https://v.nozomi.la/1.mp4'), 
+    (generate_media(dataid='1', is_video='True',  type='mp4'), 'https://v.nozomi.la/1.mp4'),
     (generate_media(dataid='1234', type='jpg'), 'https://w.nozomi.la/4/23/1234.webp'),
     (generate_media(dataid='1234', type='gif'), 'https://g.nozomi.la/4/23/1234.gif'),
     (generate_media(dataid='1234', is_video='True',  type='mp4'), 'https://v.nozomi.la/4/23/1234.mp4')
