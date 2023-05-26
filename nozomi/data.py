@@ -49,7 +49,7 @@ class Tag:
 
     tagurl:             str
     tag:                str
-    tagname_display: str
+    tagname_display:    str
     tagtype:            Optional[str]
     count:              Optional[int]
     sanitized_tag:      str = field(init=False)
