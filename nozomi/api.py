@@ -41,7 +41,7 @@ def get_post(url: str) -> Post:
         raise
 
 
-def get_posts(positive_tags: List[str], negative_tags: List[str]=None) -> Iterable[Post]:
+def get_posts(positive_tags: List[str], negative_tags: List[str] = None) -> Iterable[Post]:
     """Retrieve all post data that contains and doesn't contain certain tags.
 
     Args:
@@ -87,11 +87,10 @@ def download_media(post: Post, filepath: Path) -> List[str]:
     images_downloaded = []
     filepath.mkdir(parents=True, exist_ok=True)
     for media_meta_data in post.imageurls:
-        image_url = media_meta_data.imageurl
-        image_name = image_url.split('/')[-1]
-        image_filepath = filepath.joinpath(image_name)
-        _download_media(image_url, image_filepath)
-        images_downloaded.append(image_name)
+        filename = f'{media_meta_data.dataid}.{media_meta_data.type}'
+        image_filepath = filepath.joinpath(filename)
+        _download_media(media_meta_data.imageurl, image_filepath)
+        images_downloaded.append(filename)
     return images_downloaded
 
 
@@ -105,18 +104,12 @@ def _download_media(image_url: str, filepath: Path):
 
     """
     headers = {
-        'Host': 'i.nozomi.la',
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:69.0) Gecko/20100101 Firefox/69.0',
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,/;q=0.8',
-        'Accept-Language': 'en-US,en;q=0.5',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+        'Accept-Language': 'en-US,en;q=0.9',
         'Accept-Encoding': 'gzip, deflate, br',
-        'DNT': '1',
-        'Connection': 'keep-alive',
         'Referer': 'https://nozomi.la/',
-        'Upgrade-Insecure-Requests': '1',
-        'TE': 'Trailers',
-        'Pragma': 'no-cache',
-        'Cache-Control': 'no-cache'
+        'Upgrade-Insecure-Requests': '1'
     }
     with requests.get(image_url, stream=True, headers=headers) as r:
         with open(filepath, 'wb') as f:
@@ -134,7 +127,8 @@ def _get_post_urls(tags: List[str]) -> List[str]:
         A list of post urls that contain all of the specified tags.
 
     """
-    if len(tags) == 0: return tags
+    if len(tags) == 0:
+        return tags
     _LOGGER.debug('Retrieving all URLs that contain the tags %s', str(tags))
     sanitized_tags = [sanitize_tag(tag) for tag in tags]
     nozomi_urls  = [create_tag_filepath(sanitized_tag) for sanitized_tag in sanitized_tags]
