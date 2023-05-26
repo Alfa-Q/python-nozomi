@@ -1,27 +1,34 @@
 # python-nozomi
+
 [![Build Status](https://travis-ci.com/Alfa-Q/python-nozomi.svg?token=NAcpuTjLC6CrUpWrqz9p&branch=master)](https://travis-ci.com/Alfa-Q/python-nozomi)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/f3bffdff70794c5cb569645b60699e0b)](https://www.codacy.com?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Alfa-Q/python-nozomi&amp;utm_campaign=Badge_Grade)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/20c7f3716811466c9e2d55786885951e)](https://app.codacy.com/gh/Alfa-Q/python-nozomi/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
+[![Codacy Badge](https://app.codacy.com/project/badge/Coverage/20c7f3716811466c9e2d55786885951e)](https://app.codacy.com/gh/Alfa-Q/python-nozomi/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_coverage)
 [![PyPI version](https://badge.fury.io/py/python-nozomi.svg)](https://badge.fury.io/py/python-nozomi)
-[![Python version](https://img.shields.io/badge/python-3.7%20%7C%203.8%20%7C%203.9-green)](https://www.python.org/downloads/release/python-360/)
+[![Python version](https://img.shields.io/badge/python-3.7%20%7C%203.8%20%7C%203.9%20%7C%203.10%20%7C%203.11-green)](https://www.python.org/downloads/release/python-360/)
 
 nozomi.la API in Python.
 
 ## Features
--   Retrieving image and video posts
--   Downloading posts
+
+- Retrieving media posts
+- Downloading media
 
 ## Installation
+
 ```
 $ pip install python-nozomi
 ```
 
 ## Upgrade
+
 ```
 $ pip install python-nozomi --upgrade
 ```
 
 ## Example Usage
+
 Retrieve and download a single post provided a URL
+
 ```python
 from pathlib import Path
 from nozomi import api
@@ -36,7 +43,8 @@ api.download_media(post, Path.cwd())
 ```
 
 Retrieve and download all posts containing certain tags
-```python   
+
+```python
 # The tags that the posts retrieved must contain
 positive_tags = ['veigar', 'wallpaper']
 
@@ -45,12 +53,13 @@ for post in api.get_posts(positive_tags):
     api.download_media(post, Path.cwd())
 ```
 
-Retrieve all posts containing certain tags with blacklisted tags
+Retrieve all posts containing certain tags, ignoring blacklisted tags
+
 ```python
 # The blacklisted tags
 negative_tags = ['chogath']
 
-# Gets all posts with the tags 'veigar', 'wallpaper' but no 'chogath' tag.
+# Gets all posts with the tags 'veigar' and 'wallpaper' without the 'chogath' tag.
 for post in api.get_posts(positive_tags, negative_tags):
     api.download_media(post, Path.cwd())
 ```
