@@ -1,9 +1,40 @@
 """Test the functionality of the conversion functions."""
 
 import pytest
+from dataclasses import fields
 
-from nozomi.helpers import sanitize_tag, create_tag_filepath, create_post_filepath, parse_post_id
+from dacite import from_dict
+
+from nozomi.helpers import sanitize_tag, create_media_filepath, create_tag_filepath, create_post_filepath, parse_post_id
 from nozomi.exceptions import InvalidTagFormat, InvalidUrlFormat
+from nozomi.data import MediaMetaData
+
+
+def generate_media(**kwargs) -> MediaMetaData:
+    """Generate MediaMetaData object for testing purposes.
+
+    Helper function for tests that need to create a MediaMetaData object without needing to define
+    all of the fields. This function allows the code to avoid defining a default vaue for all of
+    the MediaMetaData fields, making it easier to find bugs when this package cannot parse certain
+    fields on the 
+
+    Args:
+        kwargs: The fields to define in the MediaMetaData object.
+
+    Returns:
+        The constructed MediaMetaData object with all of the fields set.
+
+    """
+    for field in fields(MediaMetaData):
+        if field.name in kwargs:
+            continue
+        if field.init is False:
+            continue
+        if field.type is str:
+            kwargs[field.name] = ''
+        if field.type is int:
+            kwargs[field.name] = 0
+    return from_dict(data_class=MediaMetaData, data=kwargs)
 
 
 @pytest.mark.unit
@@ -40,6 +71,19 @@ def test_parse_post_id_valid(url: str, expected: int):
 def test_parse_post_id_invalid(url: str):
     with pytest.raises(InvalidUrlFormat):
         parse_post_id(url)
+
+
+@pytest.mark.unit
+@pytest.mark.parametrize('media, expected', [
+    (generate_media(dataid='1', type='jpg'), 'https://w.nozomi.la/1.webp'),
+    (generate_media(dataid='1', type='gif'), 'https://g.nozomi.la/1.gif'),
+    (generate_media(dataid='1', is_video='True',  type='mp4'), 'https://v.nozomi.la/1.mp4'), 
+    (generate_media(dataid='1234', type='jpg'), 'https://w.nozomi.la/4/23/1234.webp'),
+    (generate_media(dataid='1234', type='gif'), 'https://g.nozomi.la/4/23/1234.gif'),
+    (generate_media(dataid='1234', is_video='True',  type='mp4'), 'https://v.nozomi.la/4/23/1234.mp4')
+])
+def test_generates_valid_file_address(media: MediaMetaData, expected: str):
+    assert create_media_filepath(media) == expected
 
 
 @pytest.mark.unit

@@ -3,6 +3,8 @@
 from typing import List, Optional
 from dataclasses import dataclass, field
 
+from nozomi.helpers import create_media_filepath
+
 
 @dataclass(frozen=True)
 class MediaMetaData:
@@ -10,18 +12,25 @@ class MediaMetaData:
 
     Args:
         is_video (str): Whether the media is a video type.
-        imageurl (str): Url to the media file.
+        type (str): Filetype of the media. This may different from the url type.
+        dataid (str): Hash of the media file.
+        width (int): Width of the media file.
+        height (int): Height of the media file.
 
     """
 
-    is_video:   str
-    imageurl:   str
+    is_video:       str
+    type:           str
+    dataid:         str
+    imageurl:       str = field(init=False)
+    width:          int
+    height:         int
 
     def __post_init__(self):
         """Calculate fields after the object is initialized."""
-        new_imageurl = 'https:' + self.imageurl
+        imageurl = create_media_filepath(self)
         # Set the tag without raising a FrozenClass error.
-        object.__setattr__(self, 'imageurl', new_imageurl)
+        object.__setattr__(self, 'imageurl', imageurl)
 
 
 @dataclass(frozen=True)
@@ -60,14 +69,8 @@ class Post(MediaMetaData):
     there will only ever be one imageurl.
 
     Args:
-        width (int): Width of the media file.
-        favorites (int): Total number of favorites.
-        source (str): Site name where the media was taken from.
-        date (str): #TODO: Determine if the date is the date that the post was uploaded
-        height (int): Height of the media file.
-        sourceid (int): #TODO: Figure out what this is.
+        date (str): The date that the post was uploaded on.
         postid (int): The unique ID of the post.
-        dataid (str): #TODO: Figure out what this is.
         general (List[Tag]): A list of the general tags that describe the post.
         copyright (List[Tag]): The various series that the media is based on.
         character (List[Tag]): The characters that are featured in the post.
@@ -76,14 +79,10 @@ class Post(MediaMetaData):
 
     """
 
-    width:      int
-    source:     str
     date:       str
-    height:     int
     postid:     int
-    dataid:     str
-    general:    List[Tag]           = field(default_factory=list)
-    copyright:  List[Tag]           = field(default_factory=list)
-    character:  List[Tag]           = field(default_factory=list)
-    artist:     List[Tag]           = field(default_factory=list)
+    general:    List[Tag] = field(default_factory=list)
+    copyright:  List[Tag] = field(default_factory=list)
+    character:  List[Tag] = field(default_factory=list)
+    artist:     List[Tag] = field(default_factory=list)
     imageurls:  List[MediaMetaData] = field(default_factory=list)

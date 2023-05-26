@@ -10,11 +10,15 @@ the simplicity of the current API, there isn't really a point right now.
 
 import re
 import logging
+from typing import ForwardRef
 
 from nozomi.exceptions import InvalidTagFormat, InvalidUrlFormat
 
 
 _LOGGER = logging.getLogger(__name__)
+
+# Prevent circular dependency issues
+MediaMetaData = ForwardRef("MediaMetaData")
 
 
 def sanitize_tag(tag: str) -> str:
@@ -66,6 +70,31 @@ def parse_post_id(url: str) -> int:
     return post_id
 
 
+def create_media_filepath(media: MediaMetaData) -> str:
+    """Build the path to media on the site.
+
+    Args:
+        media: The media on a post.
+
+    Returns:
+        The URL of the a post's media.
+
+    """
+    if media.is_video:
+        subdomain = 'v'
+        url_type = media.type
+    elif media.type == 'gif':
+        subdomain = 'g'
+        url_type = 'gif'
+    else:
+        subdomain = 'w'
+        url_type = 'webp'
+    path = _calculate_post_filepath(media.dataid)
+    url_fmt = 'https://{subdomain}.nozomi.la/{hashed_path}.{url_type}'
+    url = url_fmt.format(subdomain=subdomain, hashed_path=path, url_type=url_type)
+    return url
+
+
 def create_tag_filepath(sanitized_tag: str) -> str:
     """Build the path to a .nozomi file for a particular tag.
 
@@ -98,7 +127,7 @@ def create_post_filepath(post_id: int) -> str:
 
     The rules for creating the filepath can be found in the site's javascript file. They appear to
     be arbitrary decisions. The JSON file for the post contains a variety of useful data including
-    image data, popularity, tags, etc.
+    image data, tags, etc.
 
     Args:
         post_id: The ID of a post on the website.
@@ -109,11 +138,26 @@ def create_post_filepath(post_id: int) -> str:
     """
     _LOGGER.info("Creating tag filepath for post ID %d", post_id)
     post_id = str(post_id)
-    if len(post_id) < 3:
-        path = post_id
-    else:
-        path = re.sub('^.*(..)(.)$', r'\g<2>/\g<1>/' + post_id, post_id)
+    path = _calculate_post_filepath(post_id)
     return f'https://j.nozomi.la/post/{path}.json'
+
+
+def _calculate_post_filepath(id: str) -> str:
+    """Calculate the filepath for data on a post.
+
+    Args:
+        id: Hash of a media file or the post id.
+
+    Returns:
+        The URL path of a post's associated file.
+
+    """
+    _LOGGER.debug("Calculating the filepath of some file for a post '%s'", id)
+    if len(id) < 3:
+        path = id
+    else:
+        path = re.sub('^.*(..)(.)$', r'\g<2>/\g<1>/' + id, id)
+    return path
 
 
 def _validate_tag_sanitized(tag: str) -> None:
