@@ -2,7 +2,6 @@
 
 import os
 from pathlib import Path
-from typing import List
 
 import pytest
 
@@ -37,7 +36,7 @@ def test_get_post_multi_img(url: str):
     ['https://nozomi.la/post/490332.html', 'https://nozomi.la/post/26652067.html'],
     ['https://nozomi.la/post/490332.html', 'https://nozomi.la/post/26652067.html', 'https://nozomi.la/post/4067925.html']
 ])
-def test_get_posts_single_img(urls: List[str]):
+def test_get_posts_single_img(urls):
     count = 0
     for post in api.get_posts(urls):
         count += 1
