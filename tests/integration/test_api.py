@@ -31,12 +31,26 @@ def test_get_post_multi_img(url: str):
 
 
 @pytest.mark.integration
+@pytest.mark.parametrize('urls', [
+    ['https://nozomi.la/post/490332.html'],
+    ['https://nozomi.la/post/490332.html', 'https://nozomi.la/post/26652067.html'],
+    ['https://nozomi.la/post/490332.html', 'https://nozomi.la/post/26652067.html', 'https://nozomi.la/post/4067925.html']
+])
+def test_get_posts_single_img(urls):
+    count = 0
+    for post in api.get_posts(urls):
+        count += 1
+        assert isinstance(post, Post)
+    assert len(urls) == count
+
+
+@pytest.mark.integration
 @pytest.mark.parametrize('positive_tags', [
     (['akali', 'sakimichan']),
     (['veigar'])
 ])
 def test_retrieval_positive_tags(positive_tags):
-    for post in api.get_posts(positive_tags=positive_tags, negative_tags=[]):
+    for post in api.get_posts_with_tags(positive_tags=positive_tags, negative_tags=[]):
         assert isinstance(post, Post)
 
 
@@ -46,7 +60,7 @@ def test_retrieval_positive_tags(positive_tags):
     (['veigar'], ['nudity'])
 ])
 def test_retrieval_negative_tags(positive_tags, negative_tags):
-    for post in api.get_posts(positive_tags=positive_tags, negative_tags=negative_tags):
+    for post in api.get_posts_with_tags(positive_tags=positive_tags, negative_tags=negative_tags):
         assert isinstance(post, Post)
 
 
@@ -56,7 +70,7 @@ def test_retrieval_negative_tags(positive_tags, negative_tags):
 ])
 def test_download_single_img(positive_tags, negative_tags):
     repeat = 10
-    for post in api.get_posts(positive_tags=positive_tags, negative_tags=negative_tags):
+    for post in api.get_posts_with_tags(positive_tags=positive_tags, negative_tags=negative_tags):
         [image_name] = api.download_media(post, Path.cwd())
         os.remove(Path.cwd().joinpath(image_name))
         repeat -= 1

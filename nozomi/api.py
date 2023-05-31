@@ -24,7 +24,7 @@ def get_post(url: str) -> Post:
         url: The URL of the post to retrieve.
 
     Returns:
-        A post in JSON format if it exists.
+        Post metadata information.
 
     """
     _LOGGER.debug('Retrieving a post from URL "%s"', url)
@@ -41,7 +41,21 @@ def get_post(url: str) -> Post:
         raise
 
 
-def get_posts(positive_tags: List[str], negative_tags: List[str] = None) -> Iterable[Post]:
+def get_posts(urls: List[str]) -> Iterable[Post]:
+    """Retrieves multiple posts.
+
+    Args:
+        urls: The URLs of the posts to retrieve.
+
+    Yields:
+        Post metadata information.
+ 
+    """
+    for url in urls:
+        yield get_post(url)
+
+
+def get_posts_with_tags(positive_tags: List[str], negative_tags: List[str] = None) -> Iterable[Post]:
     """Retrieve all post data that contains and doesn't contain certain tags.
 
     Args:

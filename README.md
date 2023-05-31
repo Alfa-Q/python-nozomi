@@ -42,6 +42,26 @@ post = api.get_post(url)
 api.download_media(post, Path.cwd())
 ```
 
+Retrieve and download multiple posts provided a list of URLs
+
+```python
+from pathlib import Path
+from nozomi import api
+
+urls = [
+    'https://nozomi.la/post/26905532.html#veigar',
+    "https://nozomi.la/post/26932594.html#cho'gath",
+    'https://nozomi.la/post/25802243.html#nautilus'
+]
+
+# Retrieve all of the post metadata using the URLs
+posts = api.get_posts(urls)
+
+# Download the posts
+for post in posts:
+    api.download_media(post, Path.cwd())
+```
+
 Retrieve and download all posts containing certain tags
 
 ```python
@@ -49,7 +69,7 @@ Retrieve and download all posts containing certain tags
 positive_tags = ['veigar', 'wallpaper']
 
 # Gets all posts with the tags 'veigar', 'wallpaper'
-for post in api.get_posts(positive_tags):
+for post in api.get_posts_with_tags(positive_tags):
     api.download_media(post, Path.cwd())
 ```
 
@@ -60,6 +80,6 @@ Retrieve all posts containing certain tags, ignoring blacklisted tags
 negative_tags = ['chogath']
 
 # Gets all posts with the tags 'veigar' and 'wallpaper' without the 'chogath' tag.
-for post in api.get_posts(positive_tags, negative_tags):
+for post in api.get_posts_with_tags(positive_tags, negative_tags):
     api.download_media(post, Path.cwd())
 ```
