@@ -6,7 +6,7 @@ from setuptools import setup
 setup(
     name='python-nozomi',
     packages=['nozomi'],
-    version='1.2.0',
+    version='2.0.0',
     license='MIT',
     description='Nozomi API for retrieving images, videos, gifs.',
     long_description=open("README.md").read(),
@@ -14,7 +14,7 @@ setup(
     author='Alfa_Q',
     author_email='alfakyuu@gmail.com',
     url='https://github.com/Alfa-Q/python-nozomi',
-    download_url='https://github.com/Alfa-Q/python-nozomi/archive/1.1.1.tar.gz',
+    download_url='https://github.com/Alfa-Q/python-nozomi/archive/2.0.0.tar.gz',
     keywords=['nozomi', 'nozomi.la', 'api', 'video', 'image', 'anime'],
     install_requires=[
         'requests',
