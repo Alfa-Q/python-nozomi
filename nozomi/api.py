@@ -12,7 +12,7 @@ from dacite import from_dict
 from nozomi.data import Post
 from nozomi.exceptions import InvalidTagFormat, InvalidUrlFormat
 from nozomi.helpers import sanitize_tag, create_tag_filepath, create_post_filepath, parse_post_id
-
+from nozomi import byte_for
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -154,6 +154,7 @@ def _get_post_urls(tags: List[str]) -> List[str]:
 
 
 def _get_post_ids(tag_filepath_url: str) -> List[int]:
+    post_ids = []
     """Retrieve the .nozomi data file.
 
     Args:
@@ -165,13 +166,24 @@ def _get_post_ids(tag_filepath_url: str) -> List[int]:
     """
     _LOGGER.debug('Getting post IDs from %s', tag_filepath_url)
     try:
-        headers = {'Accept-Encoding': 'gzip, deflate, br', 'Content-Type': 'arraybuffer'}
+        headers={
+    'Host': 'n.nozomi.la',
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; rv:68.0) Gecko/20100101 Firefox/68.0',
+    'Accept': '*/*',
+    'Accept-Language': 'en-US,en;q=0.5',
+    'Accept-Encoding': 'gzip, deflate, br',
+    'Referer': 'https://nozomi.la/',
+    'Origin': 'https://nozomi.la',
+    'Connection': 'keep-alive',
+    'TE': 'Trailers',
+                            }
         response = requests.get(tag_filepath_url, headers=headers)
         _LOGGER.debug('RESPONSE: %s', response)
         total_ids = len(response.content) // 4  # divide by the size of uint
         _LOGGER.info('Unpacking .nozomi file... Expecting %d post ids.', total_ids)
-        post_ids = list(struct.unpack(f'!{total_ids}I', bytearray(response.content)))
-        _LOGGER.debug('Unpacked data... Got %d total post ids! %s', len(post_ids), str(post_ids))
+        result = []
+        byte_for.bt_for(response.content,result)
+        _LOGGER.debug('Unpacked data... Got %d total post ids! %s', len(result), str(result))
     except Exception as ex:
         _LOGGER.exception(ex)
-    return post_ids
+    return result
